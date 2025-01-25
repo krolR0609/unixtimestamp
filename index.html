@@ -30,7 +30,7 @@
         <div class="container">
             <form>
                 <label for="timestamp-input">Timestamp:</label>
-                <input name="timestamp-input" type="number" value="1737798099"/>
+                <input name="timestamp-input" type="number" value=""/>
                 <br/>
                 <label for="timestamp-local">Local:</label>
                 <input name="timestamp-local" type="text" disabled />
@@ -107,6 +107,9 @@
             if (searchParams.has(PARAMETERS.timestamp)) {
                 const timestamp = Number(searchParams.get(PARAMETERS.timestamp));
                 state.set(timestamp);
+            } else {
+                const now = new Date();
+                state.set(Math.trunc(now.getTime() / 1000));
             }
 
             for (const input of document.getElementsByName(FIELDS.input)) {
