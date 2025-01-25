@@ -1,18 +1,42 @@
 <html>
     <head>
         <title>UNIX time</title>
+        <style>
+            body { 
+                margin: 0;
+                padding: 0;
+            }
+
+            .container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                margin-top: 10vh;
+            }
+
+            form {
+                font-family: 'Arial';
+            }
+
+            input { 
+                max-width: 700px;
+                min-width: 250px;
+                margin-bottom: 10;
+            }
+
+        </style>
     </head>
     <body>
-        <div>
+        <div class="container">
             <form>
                 <label for="timestamp-input">Timestamp:</label>
                 <input name="timestamp-input" type="number" value="1737798099"/>
                 <br/>
                 <label for="timestamp-local">Local:</label>
-                <input name="timestamp-local" type="text" size="50" disabled />
+                <input name="timestamp-local" type="text" disabled />
                 <br/>
                 <label for="timestamp-utc">UTC:</label>
-                <input name="timestamp-utc" type="text" size="50" disabled />
+                <input name="timestamp-utc" type="text" disabled />
             </form>
         </div>
         <script>
