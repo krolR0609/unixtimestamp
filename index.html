@@ -1,10 +1,96 @@
 <html>
     <head>
-        <title>Hello!</title>
+        <title>UNIX time</title>
     </head>
     <body>
-        <div id="main-container" class="container" >
-            <h1>Hello World</h1>
+        <div>
+            <form>
+                <label for="timestamp-input">Timestamp:</label>
+                <input name="timestamp-input" type="number" value="1737798099"/>
+                <br/>
+                <label for="timestamp-local">Local:</label>
+                <input name="timestamp-local" type="text" size="50" disabled />
+                <br/>
+                <label for="timestamp-utc">UTC:</label>
+                <input name="timestamp-utc" type="text" size="50" disabled />
+            </form>
         </div>
+        <script>
+            /* CONSTANTS */
+            const PARAMETERS = {
+                timestamp: 'u'
+            };
+            const FIELDS = {
+                input: 'timestamp-input',
+                output: {
+                    utc: 'timestamp-utc',
+                    local: 'timestamp-local'
+                }
+            };
+
+            /* CONFIGURATION */
+            const dateFormatOptions = {
+                timeStyle: "long",
+                dateStyle: "long",
+            };
+            const localTimeZoneFormatter = new Intl.DateTimeFormat(undefined, dateFormatOptions);
+            const utcTimeZoneFormatter = new Intl.DateTimeFormat(undefined, {...dateFormatOptions, timeZone: 'UTC' });
+            const outputFieldsFunctionsMap = {
+                [FIELDS.output.utc]: (date) => utcTimeZoneFormatter.format(date),
+                [FIELDS.output.local]: (date) => localTimeZoneFormatter.format(date),
+            };
+
+            /* STATE */
+            const createState = (onTimeStampChange) => {
+                let timestamp = 0;
+
+                const set = (value) => {
+                    if (!Number.isInteger(timestamp)) {
+                        return;
+                    }
+
+                    timestamp = value;
+                    onTimeStampChange(timestamp);
+                }
+                
+                return { 
+                    set
+                }
+            };
+
+            const updateTimestampInput = (timestamp) => {
+                for (const input of document.getElementsByName(FIELDS.input)) {
+                    input.setAttribute('value', timestamp);
+                }
+            };
+
+            const updateTimestampsPreview = (timestamp) => {
+                const date = new Date(timestamp * 1000);
+                Object.entries(outputFieldsFunctionsMap).forEach(([name, dateFunction]) => {
+                    for (const input of document.getElementsByName(name)) {
+                        input.setAttribute('value', dateFunction(date));
+                    }
+                });
+            };
+
+            const state = createState((timestamp) => {
+                updateTimestampInput(timestamp);
+                updateTimestampsPreview(timestamp);
+            });
+
+            /* EVENT PRODUCERS */
+            const searchParams = new URLSearchParams(window.location.search);
+            if (searchParams.has(PARAMETERS.timestamp)) {
+                const timestamp = Number(searchParams.get(PARAMETERS.timestamp));
+                state.set(timestamp);
+            }
+
+            for (const input of document.getElementsByName(FIELDS.input)) {
+                input.addEventListener('input', (e) => {
+                    const timestamp = Number(e.target.value);
+                    state.set(timestamp);
+                });
+            }
+        </script>
     </body>
 </html>
